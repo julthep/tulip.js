@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TULIP.js Demo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    </head>
+    <body style="font-family: sans-serif">
+        <script type="module">import * as tulip from './__target__/tulip.js'; window.tulip = tulip</script>
+        <h2>TULIP.js Demo</h2>
+        TULIP Resource
+        <input type="text" id="tulip_res" style="width:400px" autofocus>
+        <button onclick="tulip.read_url()">Generate HTML</button>
+        <p><div id="tulip_out"></div></p>
+        <p><textarea id="tulip_src" rows="40" cols="100" readonly></textarea></p>
+    </body>
+</html>
