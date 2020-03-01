@@ -1,4 +1,4 @@
-// Transcrypt'ed from Python, 2020-02-29 21:50:25
+// Transcrypt'ed from Python, 2020-03-01 23:13:13
 import {AssertionError, AttributeError, BaseException, DeprecationWarning, Exception, IndexError, IterableError, KeyError, NotImplementedError, RuntimeWarning, StopIteration, UserWarning, ValueError, Warning, __JsIterator__, __PyIterator__, __Terminal__, __add__, __and__, __call__, __class__, __envir__, __eq__, __floordiv__, __ge__, __get__, __getcm__, __getitem__, __getslice__, __getsm__, __gt__, __i__, __iadd__, __iand__, __idiv__, __ijsmod__, __ilshift__, __imatmul__, __imod__, __imul__, __in__, __init__, __ior__, __ipow__, __irshift__, __isub__, __ixor__, __jsUsePyNext__, __jsmod__, __k__, __kwargtrans__, __le__, __lshift__, __lt__, __matmul__, __mergefields__, __mergekwargtrans__, __mod__, __mul__, __ne__, __neg__, __nest__, __or__, __pow__, __pragma__, __proxy__, __pyUseJsNext__, __rshift__, __setitem__, __setproperty__, __setslice__, __sort__, __specialattrib__, __sub__, __super__, __t__, __terminal__, __truediv__, __withblock__, __xor__, abs, all, any, assert, bool, bytearray, bytes, callable, chr, copy, deepcopy, delattr, dict, dir, divmod, enumerate, filter, float, getattr, hasattr, input, int, isinstance, issubclass, len, list, map, max, min, object, ord, pow, print, property, py_TypeError, py_iter, py_metatype, py_next, py_reversed, py_typeof, range, repr, round, set, setattr, sorted, str, sum, tuple, zip} from './org.transcrypt.__runtime__.js';
 var __name__ = '__main__';
 export var __author__ = 'Julthep Nandakwang';
@@ -214,9 +214,21 @@ export var _html_table_recursion = function (tulip, level, submem) {
 		if (len (tulip.member [col]) > 0) {
 			var has_table_row = true;
 		}
+		if (tulip.member [col].local ['LineSkip']) {
+			continue;
+		}
+		if (tulip.member [col].local ['LineSpan'] != null) {
+			var col_span = tulip.member [col].local ['LineSpan'];
+		}
 		level++;
-		dummy_row += str_repeat (indent, level) + (tulip.member [col].style ['Emphasize'] ? '<th>\n' : '<td>\n');
-		dummy_row_th += str_repeat (indent, level) + '<th>\n';
+		if (col_span > 1) {
+			dummy_row += str_repeat (indent, level) + (tulip.member [col].style ['Emphasize'] ? ('<th colspan="' + str (col_span)) + '">\n' : ('<td colspan="' + str (col_span)) + '">\n');
+			dummy_row_th += ((str_repeat (indent, level) + '<th colspan="') + str (col_span)) + '">\n';
+		}
+		else {
+			dummy_row += str_repeat (indent, level) + (tulip.member [col].style ['Emphasize'] ? '<th>\n' : '<td>\n');
+			dummy_row_th += str_repeat (indent, level) + '<th>\n';
+		}
 		level++;
 		if (tulip.member [col].label != null) {
 			var linked_text = tulip.member [col].label;
@@ -254,6 +266,35 @@ export var _html_table_recursion = function (tulip, level, submem) {
 	for (var row = 0; row < max_row; row++) {
 		level++;
 		html += str_repeat (indent, level) + '<tr>\n';
+		if (!(col_major) && has_dummy_row && !(tulip.member [row].local ['LineSkip'])) {
+			if (tulip.member [row].local ['LineSpan'] != null) {
+				var row_span = tulip.member [row].local ['LineSpan'];
+			}
+			if (row_span > 1) {
+				html += str_repeat (indent, level) + (tulip.member [row].style ['Emphasize'] || has_table_row ? ('<th rowspan="' + str (row_span)) + '">\n' : ('<td rowspan="' + str (row_span)) + '">\n');
+			}
+			else {
+				html += str_repeat (indent, level) + (tulip.member [row].style ['Emphasize'] || has_table_row ? '<th>\n' : '<td>\n');
+			}
+			if (tulip.member [row].label != null) {
+				var linked_text = tulip.member [row].label;
+			}
+			else {
+				var linked_text = '';
+			}
+			for (var [key, url] of Object.entries (tulip.member [row].link)) {
+				if (key.__getslice__ (0, 5, 1) == 'text:') {
+					var linked_text = linked_text.py_replace (key.__getslice__ (5, null, 1), ((('<a href="' + url) + '">') + key.__getslice__ (5, null, 1)) + '</a>');
+				}
+				else if (key.__getslice__ (0, 6, 1) == 'image:') {
+					linked_text += ((('<a href="' + url) + '"><img src="') + key.__getslice__ (6, null, 1)) + '"></a>';
+				}
+			}
+			if (linked_text != '') {
+				html += (str_repeat (indent, level) + linked_text.py_replace ('\n', '<br />')) + '\n';
+			}
+			html += str_repeat (indent, level) + (tulip.member [row].style ['Emphasize'] || has_table_row ? '</th>\n' : '</td>\n');
+		}
 		var row_span = 0;
 		var col_span = 0;
 		for (var col = 0; col < max_col; col++) {
