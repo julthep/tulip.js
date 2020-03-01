@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 @author: julthep
 """
@@ -255,11 +256,21 @@ def _html_table_recursion(tulip, level, submem):
     for col in range(len(tulip)):
         if len(tulip.member[col]) > 0:
             has_table_row = True
+        if tulip.member[col].local['LineSkip']:
+            continue
+        if tulip.member[col].local['LineSpan'] != None:
+            col_span = tulip.member[col].local['LineSpan']
         level += 1
-        dummy_row += str_repeat(indent, level) + ('<th>\n' 
-                                if tulip.member[col].style['Emphasize'] 
-                                else '<td>\n')
-        dummy_row_th += str_repeat(indent, level) + '<th>\n'
+        if col_span > 1:
+            dummy_row += str_repeat(indent, level) + ('<th colspan="' + str(col_span) + '">\n' 
+                                    if tulip.member[col].style['Emphasize'] 
+                                    else '<td colspan="' + str(col_span) + '">\n')
+            dummy_row_th += str_repeat(indent, level) + '<th colspan="' + str(col_span) + '">\n'
+        else:
+            dummy_row += str_repeat(indent, level) + ('<th>\n' 
+                                    if tulip.member[col].style['Emphasize'] 
+                                    else '<td>\n')
+            dummy_row_th += str_repeat(indent, level) + '<th>\n'
         level += 1
         # try first, except in case of irregular table (eg. rfc1942 example)
         # IndexError, js_TypeError on Sample Table
@@ -296,6 +307,32 @@ def _html_table_recursion(tulip, level, submem):
     for row in range(max_row):
         level += 1
         html += str_repeat(indent, level) + '<tr>\n'
+        # Dummy for row major
+        if not col_major and has_dummy_row and not tulip.member[row].local['LineSkip']:
+            if tulip.member[row].local['LineSpan'] != None:
+                row_span = tulip.member[row].local['LineSpan']
+            if row_span > 1:
+                html += str_repeat(indent, level) + ('<th rowspan="' + str(row_span) + '">\n' 
+                                        if tulip.member[row].style['Emphasize'] or has_table_row
+                                        else '<td rowspan="' + str(row_span) + '">\n')
+            else:
+                html += str_repeat(indent, level) + ('<th>\n' 
+                                        if tulip.member[row].style['Emphasize'] or has_table_row
+                                        else '<td>\n')
+            if tulip.member[row].label != None:
+                linked_text = tulip.member[row].label
+            else:
+                linked_text = ''
+            for key, url in Object.entries(tulip.member[row].link):
+                if key[:5] == 'text:':
+                    linked_text = linked_text.replace(key[5:], '<a href="' + url + '">' + key[5:] + '</a>')
+                elif key[:6] == 'image:':
+                    linked_text += '<a href="' + url + '"><img src="' + key[6:] + '"></a>'
+            if linked_text != '':
+                html += str_repeat(indent, level) + linked_text.replace('\n','<br />') + '\n'
+            html += str_repeat(indent, level) + ('</th>\n' 
+                                    if tulip.member[row].style['Emphasize'] or has_table_row
+                                    else '</td>\n')
         row_span = 0
         col_span = 0                # working
         for col in range(max_col):
