@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TULIP.js Demo</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    </head>
-    <body style="font-family: sans-serif">
-        <script type="module">import * as tulip from './__target__/tulip.js'; window.tulip = tulip</script>
-        <h2>TULIP.js Demo</h2>
-        TULIP Resource
-        <input type="text" id="tulip_res" style="width:400px" autofocus>
-        <button onclick="tulip.read_url()">Generate HTML</button>
-        <p><div id="tulip_out"></div></p>
-        <p><textarea id="tulip_src" rows="40" cols="100" readonly></textarea></p>
-    </body>
+  <head>
+    <title>TULIP.js Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="js/Chart.js"></script>
+    <script type="text/javascript" src="js/chartjs-plugin-colorschemes.js"></script>
+  </head>
+  <body style="font-family: sans-serif">
+    <script type="module">import * as tulip from './__target__/tulip.js'; window.tulip = tulip</script>
+    <script>function input_enter() {if (event.keyCode === 13) {tulip.read_url()}}</script>
+    <span>TULIP Resource</span>
+    <input type="text" id="tulip_res" style="width:400px" autofocus onkeydown="input_enter()" />
+    <button id="gen_btn" onclick="tulip.read_url()">Generate HTML</button>
+    <p><div id="tulip_out"></div></p>
+    <p><textarea id="tulip_src" rows="40" cols="100" readonly></textarea></p>
+  </body>
 </html>
